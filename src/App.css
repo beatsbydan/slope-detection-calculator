@@ -3,3 +3,60 @@
   padding: 0;
   box-sizing: border-box;
 }
+:root{
+  /* COLORS */
+  --bg-col: #F2F1EF;
+  --text-col: #413F3D;
+  --primary-text: #B1A6A4;
+  --secondary-text: #697184;
+  --neutral-col: #D8CFD0;
+
+  /* FONTS */
+  /* Font-Families */
+  --ff-j-sans:'Josefin Sans', sans-serif;
+  --ff-oswald: 'Oswald', sans-serif;
+
+  /* Font-Weights */
+  --fw-400: 400;
+  --fw-500: 500;
+  --fw-600: 600;
+  --fw-700: 700;
+
+  /* Font-Sizes */
+
+}
+body{
+  background-color: var(--bg-col);
+}
+a{
+  text-decoration: none;
+  color: black;
+}
+.slide-in{
+  position:fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: var(--bg-col);
+  background-image: url(./Assets/beam.png);
+  background-size: 200px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  transform-origin: bottom;
+  z-index: 10;
+}
+.slide-out{
+  position:fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: var(--bg-col);
+  background-image: url(./Assets/beam.png);
+  background-size: 200px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  transform-origin: top;
+  z-index: 10;
+}

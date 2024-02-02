@@ -1,0 +1,24 @@
+.calculator{
+    width: 90%;
+    max-width: 800px;
+    margin:3rem auto;
+}
+.calculatorBody{
+    width: 100%;
+    text-align: center;
+}
+.calculatorBody form{
+    margin-top: 2rem;
+}
+.formInputs--firstSet{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+
+}
+.calculator h1{
+    color: var(--text-col);
+    font-family: var(--ff-oswald);
+}

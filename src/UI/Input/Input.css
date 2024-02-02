@@ -1,0 +1,40 @@
+input:focus{
+    outline: none;
+}
+.formElement{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+input{
+    width: 100%;
+    max-width: 100px;
+    background-color: transparent;
+    border: 0.1rem solid var(--text-col);
+    border-radius: 0.7rem;
+    padding: 1rem;
+    font-family: var(--j-sans);
+    color: var(--text-col);
+}
+label{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-col);
+    font-family: var(--j-sans);
+}
+label small{
+    color: red;
+    font-size: 0.7rem;
+    font-family: var(--j-sans);
+}
+input::placeholder{
+    font-family: inherit;
+}
+input.errorField{
+    border-color: red;
+}
