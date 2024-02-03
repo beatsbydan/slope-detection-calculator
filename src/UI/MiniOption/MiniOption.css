@@ -1,0 +1,26 @@
+.miniOption{
+    width: 15%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: var(--ff-j-sans);
+    color: var(--text-col);
+}
+.optionSet{
+    margin-top: 1.7rem;
+    font-family: var(--ff-oswald);
+}
+.optionSet span{
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.6rem;
+    border: 0.1rem solid transparent;
+    border-radius: 0.4rem;
+    color: rgba(128, 128, 128, 0.59);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.optionSet span:hover, .optionSet span.currentSelection{
+    border-color: var(--text-col);
+    color: var(--text-col);
+}
