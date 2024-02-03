@@ -1,3 +1,3 @@
-export const useCalculator = () => {
+export const useCalculator = (data) => {
     
 }

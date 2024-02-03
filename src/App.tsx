@@ -5,20 +5,23 @@ import Calculator from './Components/Calculator/Calculator';
 import Results from './Components/Results/Results';
 import Home from './Components/Home/Home';
 import { AnimatePresence } from 'framer-motion';
+import { ContextProvider } from './Context/Context';
 
 function App() {
   const location =useLocation()
   return (
     <div className='App'>
-      <main>
-        <AnimatePresence mode="wait">
-          <Routes location={location} key={location.pathname}>
-            <Route path="/" element = {<Home/>}/>
-            <Route path="/calculate" element = {<Calculator/>}/>
-            <Route path="/result" element = {<Results/>}/>
-          </Routes>
-        </AnimatePresence>
-      </main>
+      <ContextProvider>
+        <main>
+          <AnimatePresence mode="wait">
+            <Routes location={location} key={location.pathname}>
+              <Route path="/" element = {<Home/>}/>
+              <Route path="/calculate" element = {<Calculator/>}/>
+              <Route path="/result" element = {<Results/>}/>
+            </Routes>
+          </AnimatePresence>
+        </main>
+      </ContextProvider>
     </div>
   );
 }

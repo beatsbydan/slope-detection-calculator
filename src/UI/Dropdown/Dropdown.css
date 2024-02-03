@@ -1,11 +1,12 @@
 .dropdown{
     width:100%;
     position: relative;
+    font-family: var(--ff-j-sans);
 }
 .optionBlock{
     width: 100%;
     padding: 0.45rem 0.6rem;
-    border: 0.1rem solid #495464;
+    border: 0.1rem solid var(--text-col);
     border-radius: 0.3rem;
     display: flex;
     flex-direction: row;
@@ -21,13 +22,13 @@
 }
 .option{
     font-size: 0.8rem;
-    color: #495464;
+    color: var(--text-col);
     letter-spacing: 0.04rem;
 }
 .menu{
     border-right: none;
     width: 100%;
-    background-color: #FFFBF4;
+    background-color: white;
     display: flex;
     flex-direction: column;
     gap:0.5rem;
@@ -47,20 +48,20 @@
     position: absolute;
 }
 .menu::-webkit-scrollbar-track{
-    background-color: #FFFBF4;
+    background-color: white;
 }
 .menu::-webkit-scrollbar-thumb{
-    background-color: #495464;
+    background-color: var(--text-col);
     border-radius: 100vw;
-    border: .2em solid #FFFBF4;
+    border: .2em solid white;
 }
 .item{
     width: 100%;
     font-size: 0.8rem;
     margin: auto;
-    color: #495464;
+    color: var(--text-col);
     padding: 0.8rem;
-    border-bottom: 0.1rem solid #495464;
+    border-bottom: 0.1rem solid rgba(0, 0, 0, 0.204);
     letter-spacing: 0.04rem;
     cursor: pointer;
     transition: all 0.3s ease;

@@ -1,0 +1,74 @@
+.modalOverlay{
+    width: 100%;
+    height: 100vh;
+    top: 0;
+    cursor:pointer;
+    z-index: 10;
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.258);
+}
+.modalContent{
+    width: 90%;
+    max-width: 800px;
+    padding: 1rem;
+    height: 90%;
+    z-index: 100;
+    background-color: white;
+    top: 50%;
+    left: 50%;
+    position: fixed;
+    transform: translate(-50%, -50%);
+    overflow-y: scroll;
+}
+.modalContent button{
+    margin-top: 3.5rem;
+    display: flex;
+    justify-content: center;
+}
+.modalContent h1{
+    text-align: center;
+    margin-bottom: 2.5rem;
+    color: var(--text-col);
+    font-family: var(--ff-oswald);
+}
+.modalContent::-webkit-scrollbar{
+    width: 0.5em;
+    position: absolute;
+}
+.modalContent::-webkit-scrollbar-track{
+    background-color: white;
+}
+.modalContent::-webkit-scrollbar-thumb{
+    background-color:var(--text-col);
+    border-radius: 100vw;
+    border: .2em solid #FFFBF4;
+}
+.spanItem{
+    width: 100%;
+    max-width: 500px;
+    margin: 3rem auto;
+    position: relative;
+}
+.spanItem h4{
+    font-family: var(--ff-oswald);
+}
+.spanItem button{
+    position: absolute;
+    font-size: 0.8rem;
+    width: 60px;
+    height: 40px;
+    padding: 0.6rem;
+    top: -60px;
+    right: 0;
+    background-color: var(--text-col);
+    color: var(--bg-col);
+    box-shadow: 0px 2px 4px 2px rgba(0, 0, 0, 0.118);
+}
+.spanItem--input{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1.2rem;
+    margin: 1rem auto;
+}

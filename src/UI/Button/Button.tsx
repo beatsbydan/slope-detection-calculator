@@ -3,11 +3,18 @@ import './Button.css'
 
 type buttonType = {
     text: string
+    type: 'button' | 'submit',
+    actionHandler: () => void
 }
 
 const Button:React.FC<buttonType> = (props) => {
     return (
-        <button type='submit'>{props.text}</button>
+        <button 
+            onClick={props.actionHandler} 
+            type={props.type}
+        >
+            {props.text}
+        </button>
     )
 }
 

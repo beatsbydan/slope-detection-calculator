@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext } from 'react'
 import './Calculator.css'
 import { PrevNav } from '../../UI/PrevNav/PrevNav';
 import Transition from '../../UI/Transition/Transition';
@@ -7,73 +7,24 @@ import Input from '../../UI/Input/Input';
 import Spans from './Spans/Spans';
 import Separator from '../../UI/Separator/Separator';
 import MiniOption from '../../UI/MiniOption/MiniOption';
+import { Context } from '../../Context/Context';
 
-type inputFieldsType = {
-    supports: string,
-    joints: string,
-    spans: string,
-    settlement: string,
-    fixedFirstNode: string,
-    fixedLastNode: string
-}
-type inputErrorsType = {
-    supports: string,
-    joints: string,
-    spans: string,
-    settlement: string,
-    fixedFirstNode: string,
-    fixedLastNode: string
-}
 
 const Calculator:React.FC = () => {
-    const [inputFields, setInputFields] = useState<inputFieldsType>({
-        supports: '',
-        joints: '',
-        spans: '',
-        settlement: '',
-        fixedFirstNode: '',
-        fixedLastNode: ''
-    })
-    const [inputErrors, setInputErrors] = useState<inputErrorsType>({
-        supports: '',
-        joints: '',
-        spans: '',
-        settlement: '',
-        fixedFirstNode: '',
-        fixedLastNode: ''
-    })
-    const [isOpen, setIsOpen] = useState<boolean>(false)
-
-    const handleOpen = () => {
-        setIsOpen(!isOpen)
-    }
-    
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const {name, value} = e.target
-        setInputFields( prev => {
-            return {...prev, [name]: value}
-        })
-    }
-    const handleSettlementSelection = (value: string) => {
-        setInputFields(prev => {
-            return {...prev, settlement: value}
-        })
-    }
-    const handleFixedFirstNodeSelection = (value: string) => {
-        setInputFields(prev => {
-            return {...prev, fixedFirstNode: value}
-        })
-    }
-    const handleFixedLastNodeSelection = (value: string) => {
-        setInputFields(prev => {
-            return {...prev, fixedLastNode: value}
-        })
-    }
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
-        console.log(inputFields)
-    }
+    const {
+        spans,
+        inputFields,
+        isOpen,
+        inputErrors,
+        createSpansList,
+        handleChange,
+        handleSpanInputChange,
+        handleSubmit,
+        handleOpen,
+        handleFixedFirstNodeSelection,
+        handleFixedLastNodeSelection,
+        handleSettlementSelection
+    } = useContext(Context)
 
     return (
         <div className='calculator'>
@@ -87,7 +38,7 @@ const Calculator:React.FC = () => {
                             label='Number of Supports'
                             name='supports'
                             value={inputFields.supports}
-                            error=''
+                            error={inputErrors.supports}
                             onChange={handleChange}
                         />
                         <Separator/>
@@ -95,23 +46,31 @@ const Calculator:React.FC = () => {
                             label='Number of Internal Joints'
                             name='joints'
                             value={inputFields.joints}
-                            error=''
+                            error={inputErrors.joints}
                             onChange={handleChange}
                         />
                         <Separator/>
-                        <Input
-                            label='Number of Spans'
-                            name='spans'
-                            value={inputFields.spans}
-                            error=''
-                            onChange={handleChange}
-                        />
+                        <div className="spanEditor">
+                            <Input
+                                label='Number of Spans'
+                                name='spans'
+                                value={spans.spansCount}
+                                error={inputErrors.spans}
+                                onChange={handleSpanInputChange}
+                            />
+                            {
+                                parseFloat(spans.spansCount) > 0 
+                                &&
+                                <button type="button" onClick={createSpansList}>Edit</button>
+                            }
+                        </div>
                     </div>
                     {
-                        parseFloat(inputFields.spans) > 0 
+                        isOpen 
                         &&
                         <Spans 
-                            spanCount={parseFloat(inputFields.spans)} 
+                            spanCount={parseFloat(spans.spansCount)} 
+                            isOpen={isOpen}
                             closeModal={handleOpen}
                         />
                     }
@@ -140,11 +99,12 @@ const Calculator:React.FC = () => {
                     <div className="formActions">
                         <Button
                             text='Evaluate'
+                            type='submit'
+                            actionHandler={()=>{}}
                         />
                     </div>
                 </form>
             </div>
-
         </div>
     )
 }
