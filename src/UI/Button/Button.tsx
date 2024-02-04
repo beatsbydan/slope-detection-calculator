@@ -7,10 +7,14 @@ type buttonType = {
     actionHandler: () => void
 }
 
+const defaultFunction = () => {
+    return
+}
+
 const Button:React.FC<buttonType> = (props) => {
     return (
         <button 
-            onClick={props.actionHandler} 
+            onClick={props.type === "button" ? props.actionHandler: defaultFunction} 
             type={props.type}
         >
             {props.text}

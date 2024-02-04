@@ -1,60 +1,120 @@
-// Constant values
-const E = ''
-const I = ''
+// FIXED END MOMENTS
 
-// Fixed End Moments Formulas
-// Both ends fixed
+// - Both ends fixed
 
 export const FEMOptionsForBothEndsFixed = {
-    0: {
-        firstNode: (load, length) => ((load * length) / 8),
+    1: {
+        node: (load, length) => ((load * length) / 8),
         lastNode: (load, length) => ((load * length) / 8) 
     },
-    1: {
-        firstNode: (load, length, a, b) => (load * b ** 2 * a) / (length ** 2),
+    2: {
+        node: (load, length, a, b) => (load * b ** 2 * a) / (length ** 2),
         lastNode: (load, length, a, b) => (load * a ** 2 * b) / (length ** 2)
     },
-    2: {
-        firstNode: (load, length) => (2 * load * length) / 9 ,
+    3: {
+        node: (load, length) => (2 * load * length) / 9 ,
         lastNode: (load, length) => (2 * load * length) / 9 
     },
-    3: {
-        firstNode: (load, length) => (15 * load * length) / 48,
+    4: {
+        node: (load, length) => (15 * load * length) / 48,
         lastNode: (load, length) => (15 * load * length) / 48
     }, 
-    4: {
-        firstNode: (load, length) => (load * length ** 2) / 12,
+    5: {
+        node: (load, length) => (load * length ** 2) / 12,
         lastNode: (load, length) => (load * length ** 2) / 12
     }, 
-    5: {
-        firstNode: (load, length) => (11 * load * length ** 2) / 192,
+    6: {
+        node: (load, length) => (11 * load * length ** 2) / 192,
         lastNode: (load, length) => (5 * load * length ** 2) / 192
     }, 
-    6: {
-        firstNode: (load, length) => (load * length ** 2) / 20 ,
+    7: {
+        node: (load, length) => (load * length ** 2) / 20 ,
         lastNode: (load, length) => (load * length ** 2) / 30
     }, 
-    7: {
-        firstNode: (load, length) => (5 * load * length ** 2) / 96,
+    8: {
+        node: (load, length) => (5 * load * length ** 2) / 96,
         lastNode: (load, length) => (5 * load * length ** 2) / 96
     } 
 }
 
-// One end fixed
+// - One end fixed
+
 export const FEMOptionsForOneEndFixed = {
-    0: (load, length)=> (3 * load * length) / 16,
-    1: (load, length, a, b)=> (load / length ** 2) * ((b ** 2 * a) + (a ** 2 * b / 2)),
-    2: (load, length)=> (load * length) / 3,
-    3: (load, length)=> (45 * load * length / 96),
-    4: (load, length)=> (load * length ** 2 / 8),
-    5: (load, length)=> (9 * load * length ** 2 / 128),
-    6: (load, length)=> (load * length ** 2 / 15),
-    7: (load, length)=> ( 5 * load * length ** 2 / 64),
+    1: (load, length)=> (3 * load * length) / 16,
+    2: (load, length, a, b)=> (load / length ** 2) * ((b ** 2 * a) + (a ** 2 * b / 2)),
+    3: (load, length)=> (load * length) / 3,
+    4: (load, length)=> (45 * load * length / 96),
+    5: (load, length)=> (load * length ** 2 / 8),
+    6: (load, length)=> (9 * load * length ** 2 / 128),
+    7: (load, length)=> (load * length ** 2 / 15),
+    8: (load, length)=> ( 5 * load * length ** 2 / 64),
 }
 
-// Slope-deflection-equation
 
-export const calculateSlopeDeflection = (fem, length, thetaA, thetaB, angularDisplacement) => {
-    return (fem + (((2 * E * I) / length) * (thetaA + (2 * thetaB) +((3 * angularDisplacement) / length))))
+// SLOPE DEFLECTION EQUATIONs
+
+export const obtainAntiClockWiseSlopeDeflectionEquation = (fem, length, theta1, theta2, isSettlement) => {
+    if(isSettlement){
+        if(theta1 === 0){
+
+        }
+        if(theta2 === 0){
+    
+        }
+        if(theta1 === 0 && theta2 === 0){
+    
+        }
+        if(theta1 !== 0 && theta2 !== 0){
+    
+        }
+    }
+    else{
+        if(theta1 === 0 && theta2 !== 0){
+            return `-${fem} + ${(2 / length).toFixed(2)}EI[theta2]`
+        }
+        if(theta2 === 0 && theta1 !== 0){
+            return `-${fem} + ${(4 / length).toFixed(2)}EI[theta1]`
+        }
+        if(theta1 === 0 && theta2 === 0){
+            return `-${fem}`
+        }
+        if(theta1 !== 0 && theta2 !== 0){
+            return `-${fem} + ${(2 / length).toFixed(2)}EI[2theta1 + theta2]`
+        }
+    }
+
+    // return (fem + (((2 * E * I) / length) * (thetaA + (2 * thetaB) +((3 * angularDisplacement) / length))))
+}
+
+export const obtainClockWiseSlopeDeflectionEquation = (fem, length, theta1, theta2, isSettlement) => {
+    if(isSettlement){
+        if(theta1 === 0){
+
+        }
+        if(theta2 === 0){
+    
+        }
+        if(theta1 === 0 && theta2 === 0){
+    
+        }
+        if(theta1 !== 0 && theta2 !== 0){
+    
+        }
+    }
+    else{
+        if(theta1 === 0 && theta2 !== 0){
+            return `${fem} + ${(4 / length).toFixed(2)}EI[theta2]`
+        }
+        if(theta2 === 0 && theta1 !== 0){
+            return `${fem} + ${(2 / length).toFixed(2)}EI[theta1]`
+        }
+        if(theta1 === 0 && theta2 === 0){
+            return `${fem}`
+        }
+        if(theta1 !== 0 && theta2 !== 0){
+            return `${fem} + ${(2 / length).toFixed(2)}EI[theta1 + 2theta2]`
+        }
+    }
+    // return (fem + (((2 * E * I) / length) * (thetaB + (2 * thetaA) +((3 * angularDisplacement) / length))))
 }
 

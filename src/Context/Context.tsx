@@ -1,4 +1,5 @@
 import { useState, createContext, ReactNode } from "react";
+import { evaluate } from "../App/Engine";
 
 type inputFieldsType = {
     supports: string,
@@ -181,6 +182,7 @@ export const ContextProvider:React.FC<contextType> = ({children}) => {
             ...spans
         }
         console.log(parameters)
+        evaluate(parameters)
     }
 
     const value = {
