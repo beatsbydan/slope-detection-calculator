@@ -37,6 +37,7 @@ type contextValueProps = {
     inputFields: {
         [key: string]: string
     },
+    loadingConditions: string[],
     spans: spansType,
     inputErrors: {
         [key: string]: string
@@ -59,6 +60,7 @@ export const Context = createContext<contextValueProps>({
         spansCount: '',
         spanDetails: []
     },
+    loadingConditions: [],
     inputErrors: {},
     isOpen: false,
     handleOpen: () => {},
@@ -73,6 +75,20 @@ export const Context = createContext<contextValueProps>({
 })
 
 export const ContextProvider:React.FC<contextType> = ({children}) => {
+    const loadingConditions: string[] = [
+        'None.',
+        'Point load at center.',
+        'Point load at distance \'a\' from left end and \'b\' from the right end.',
+        'Two equal point loads, spaced at 1/3 of the total length from each other.',
+        'Three equal point loads, spaced at 1/4 of the total length from each other.',
+        'Uniformly distributed load over the whole length.',
+        'Uniformly distributed load over half of the span on the right side. ',
+        'Uniformly distributed load over half of the span on the left side.',
+        'Variably distributed load, with highest point on the right end.',
+        'Variably distributed load, with highest point on the left end.',
+        'Variably distributed load, with highest point at the centre.'
+    ]
+    
     const [inputFields, setInputFields] = useState<inputFieldsType>({
         supports: '',
         joints: '',
@@ -172,6 +188,7 @@ export const ContextProvider:React.FC<contextType> = ({children}) => {
         spans,
         inputErrors,
         isOpen,
+        loadingConditions,
         handleOpen,
         handleChange,
         createSpansList,
