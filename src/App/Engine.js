@@ -3,7 +3,9 @@ import {
     FEMOptionsForOneEndFixed, 
     obtainAntiClockWiseSlopeDeflectionEquation,
     obtainClockWiseSlopeDeflectionEquation,
-    loadingConditions
+    loadingConditions,
+    generateEquilibriumEquations,
+    alphabets
 } from './Utils'
 
 
@@ -67,18 +69,18 @@ export const evaluate = (data) => {
             angularDisplacement = 0
         }
         if(spanNumber !== '1' && spanNumber !== spansCount ){
-            clockWiseEquation = obtainClockWiseSlopeDeflectionEquation(FEM, lengthVal, 'theta1', 'theta2', isSettlement )
-            antiClockWiseEquation = obtainAntiClockWiseSlopeDeflectionEquation(FEM, lengthVal, 'theta1', 'theta2', isSettlement)
+            clockWiseEquation = obtainClockWiseSlopeDeflectionEquation(FEM, lengthVal, `theta${alphabets[parseFloat(spanNumber) -1]}`, `theta${alphabets[parseFloat(spanNumber)]}`, isSettlement )
+            antiClockWiseEquation = obtainAntiClockWiseSlopeDeflectionEquation(FEM, lengthVal, `theta${alphabets[parseFloat(spanNumber) -1]}`, `theta${alphabets[parseFloat(spanNumber)]}`, isSettlement)
         }
         else if(spanNumber === '1'){
             theta1 = 0
-            clockWiseEquation = obtainClockWiseSlopeDeflectionEquation(FEM, lengthVal, theta1, 'theta2', isSettlement )
-            antiClockWiseEquation = obtainAntiClockWiseSlopeDeflectionEquation(FEM, lengthVal, theta1, 'theta2', isSettlement)
+            clockWiseEquation = obtainClockWiseSlopeDeflectionEquation(FEM, lengthVal, theta1, `theta${alphabets[parseFloat(spanNumber)]}`, isSettlement )
+            antiClockWiseEquation = obtainAntiClockWiseSlopeDeflectionEquation(FEM, lengthVal, theta1, `theta${alphabets[parseFloat(spanNumber)]}`, isSettlement)
         }
         else{
             theta2 = 0
-            clockWiseEquation = obtainClockWiseSlopeDeflectionEquation(FEM, lengthVal, 'theta1', theta2, isSettlement )
-            antiClockWiseEquation = obtainAntiClockWiseSlopeDeflectionEquation(FEM, lengthVal, 'theta1', theta2, isSettlement)
+            clockWiseEquation = obtainClockWiseSlopeDeflectionEquation(FEM, lengthVal, `theta${alphabets[parseFloat(spanNumber) -1]}`, theta2, isSettlement )
+            antiClockWiseEquation = obtainAntiClockWiseSlopeDeflectionEquation(FEM, lengthVal, `theta${alphabets[parseFloat(spanNumber) -1]}`, theta2, isSettlement)
         }
 
         const spanResult = {
@@ -95,6 +97,60 @@ export const evaluate = (data) => {
 
         fixedEndMomentsAndSlopeDeflectionEquations.push(spanResult)
         results.fixedEndMomentsAndSlopeDeflectionEquations = [...fixedEndMomentsAndSlopeDeflectionEquations]
-        console.log(results)
     }
+
+    console.log(results)
+
+    // Equilibrium Equation
+
+    const NodeEquations = []
+
+    for(let i = 1; i <= parseFloat(spansCount) + 1; i++){
+        const NodeEquation = {
+            nodeNumber: `${i}`,
+            clockwise: null,
+            antiClockwise: null 
+        }
+        NodeEquations.push(NodeEquation)
+    }
+    
+    NodeEquations[NodeEquations.length -1].clockwise = results.fixedEndMomentsAndSlopeDeflectionEquations[results.fixedEndMomentsAndSlopeDeflectionEquations.length - 1].slopeDeflectionEquations.clockWise
+    
+    for(let spanResult of  results.fixedEndMomentsAndSlopeDeflectionEquations){
+        const {spanNumber, slopeDeflectionEquations} = spanResult
+        
+        const prevSpan = results.fixedEndMomentsAndSlopeDeflectionEquations.find(span => parseFloat(span.spanNumber) === parseFloat(spanNumber)  - 1)
+        
+        const spanFirstNode = NodeEquations.find(node => node.nodeNumber === spanNumber)
+        const spanLastNode = NodeEquations.find(node => (parseFloat(node.nodeNumber) + 1).toString() === (parseFloat(spanNumber) + 1).toString())
+            
+        if(spanNumber === '1'){
+            spanFirstNode.antiClockwise = slopeDeflectionEquations.antiClockWise
+        }
+        else if(spanNumber === spansCount){
+            spanLastNode.clockwise = prevSpan.slopeDeflectionEquations.clockWise
+            spanFirstNode.antiClockwise = slopeDeflectionEquations.antiClockWise
+        }
+        else{
+            spanFirstNode.antiClockwise = slopeDeflectionEquations.antiClockWise
+            spanFirstNode.clockwise = prevSpan.slopeDeflectionEquations.clockWise
+        }
+    }
+
+    const equilibriumEquations = {}
+
+    let i = 1
+    const evaluatingNodes = NodeEquations.filter(nodeEquation => (nodeEquation.nodeNumber !== '1' && nodeEquation.nodeNumber !== (parseFloat(spansCount)+ 1).toString()))
+    
+    for(let node of evaluatingNodes){
+        equilibriumEquations[`equation${i}`]= generateEquilibriumEquations(node.clockwise, node.antiClockwise)
+        i++;
+    }
+
+    // Moments
+
+    // Reactions
+
+    // ShearForce
+
 }

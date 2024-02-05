@@ -13,6 +13,12 @@ export const loadingConditions = [
     'Variably distributed load, with highest point at the centre.'
 ]
 
+export const alphabets = [
+    "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", 
+    "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", 
+    "U", "V", "W", "X", "Y", "Z"
+] 
+
 // FIXED END MOMENTS
 
 // - Both ends fixed
@@ -69,6 +75,11 @@ export const FEMOptionsForOneEndFixed = {
 // SLOPE DEFLECTION EQUATIONs
 
 export const obtainAntiClockWiseSlopeDeflectionEquation = (fem, length, theta1, theta2, isSettlement) => {
+    const deflectionEquation = {
+        femValue: fem,
+        coefficientOfEI: 0,
+        equation: ''
+    }
     if(isSettlement){
         if(theta1 === 0){
 
@@ -85,23 +96,34 @@ export const obtainAntiClockWiseSlopeDeflectionEquation = (fem, length, theta1, 
     }
     else{
         if(theta1 === 0 && theta2 !== 0){
-            return `-${fem} + ${(2 / length).toFixed(2)}EI[theta2]`
+            deflectionEquation.coefficientOfEI = (2 / length).toFixed(2)
+            deflectionEquation.equation =  `-${fem} + ${(2 / length).toFixed(2)}EI[${theta2}]`
+            return deflectionEquation
         }
         if(theta2 === 0 && theta1 !== 0){
-            return `-${fem} + ${(4 / length).toFixed(2)}EI[theta1]`
+            deflectionEquation.coefficientOfEI = (4 / length).toFixed(2)
+            deflectionEquation.equation = `-${fem} + ${(4 / length).toFixed(2)}EI[${theta1}]`
+            return deflectionEquation
         }
         if(theta1 === 0 && theta2 === 0){
-            return `-${fem}`
+            deflectionEquation.equation = `${fem}`
+            return deflectionEquation
         }
         if(theta1 !== 0 && theta2 !== 0){
-            return `-${fem} + ${(2 / length).toFixed(2)}EI[2theta1 + theta2]`
+            deflectionEquation.coefficientOfEI = (2 / length).toFixed(2)
+            deflectionEquation.equation = `-${fem} + ${(2 / length).toFixed(2)}EI[2${theta1} + ${theta2}]`
+            return deflectionEquation
         }
     }
-
-    // return (fem + (((2 * E * I) / length) * (thetaA + (2 * thetaB) +((3 * angularDisplacement) / length))))
 }
 
 export const obtainClockWiseSlopeDeflectionEquation = (fem, length, theta1, theta2, isSettlement) => {
+    const deflectionEquation = {
+        femValue: fem,
+        coefficientOfEI: 0,
+        equation: ''
+    }
+    
     if(isSettlement){
         if(theta1 === 0){
 
@@ -118,18 +140,27 @@ export const obtainClockWiseSlopeDeflectionEquation = (fem, length, theta1, thet
     }
     else{
         if(theta1 === 0 && theta2 !== 0){
-            return `${fem} + ${(4 / length).toFixed(2)}EI[theta2]`
+            deflectionEquation.coefficientOfEI = (4 / length).toFixed(2)
+            deflectionEquation.equation = `${fem} + ${(4 / length).toFixed(2)}EI[${theta2}]`
+            return deflectionEquation
         }
         if(theta2 === 0 && theta1 !== 0){
-            return `${fem} + ${(2 / length).toFixed(2)}EI[theta1]`
+            deflectionEquation.coefficientOfEI = (2 / length).toFixed(2).toFixed(2)
+            deflectionEquation.equation = `${fem} + ${(2 / length).toFixed(2)}EI[${theta1}]`
+            return deflectionEquation
         }
         if(theta1 === 0 && theta2 === 0){
-            return `${fem}`
+            deflectionEquation.equation = `${fem}`
+            return deflectionEquation
         }
         if(theta1 !== 0 && theta2 !== 0){
-            return `${fem} + ${(2 / length).toFixed(2)}EI[theta1 + 2theta2]`
+            deflectionEquation.coefficientOfEI = (2 / length).toFixed(2).toFixed(2)
+            deflectionEquation.equation = `${fem} + ${(2 / length).toFixed(2)}EI[${theta1} + 2${theta2}]`
+            return deflectionEquation
         }
     }
-    // return (fem + (((2 * E * I) / length) * (thetaB + (2 * thetaA) +((3 * angularDisplacement) / length))))
 }
 
+export const generateEquilibriumEquations = (clockWiseEquation, anticlockwiseEquation) => {
+    const totalFEM = clockWiseEquation.femValue + anticlockwiseEquation.femValue
+}

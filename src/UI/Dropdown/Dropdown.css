@@ -31,7 +31,6 @@
     background-color: white;
     display: flex;
     flex-direction: column;
-    gap:0.5rem;
     position: absolute;
     top: calc(100% + 10px);
     height:180px;
@@ -60,7 +59,7 @@
     font-size: 0.8rem;
     margin: auto;
     color: var(--text-col);
-    padding: 0.8rem;
+    padding:1rem;
     border-bottom: 0.1rem solid rgba(0, 0, 0, 0.204);
     letter-spacing: 0.04rem;
     cursor: pointer;
@@ -76,5 +75,12 @@
     }
     to{
         transform: translateY(0);
+    }
+}
+
+@media(hover: hover){
+    .item:hover{
+        color: white;
+        background-color: var(--text-col);
     }
 }
