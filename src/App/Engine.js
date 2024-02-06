@@ -5,7 +5,8 @@ import {
     obtainClockWiseSlopeDeflectionEquation,
     loadingConditions,
     generateEquilibriumEquations,
-    alphabets
+    alphabets,
+    solveSimultaneousEquations
 } from './Utils'
 
 
@@ -99,8 +100,6 @@ export const evaluate = (data) => {
         results.fixedEndMomentsAndSlopeDeflectionEquations = [...fixedEndMomentsAndSlopeDeflectionEquations]
     }
 
-    console.log(results)
-
     // Equilibrium Equation
 
     const NodeEquations = []
@@ -137,6 +136,9 @@ export const evaluate = (data) => {
         }
     }
 
+    results.nodeEquations = [...NodeEquations]
+
+    
     const equilibriumEquations = {}
 
     let i = 1
@@ -147,10 +149,20 @@ export const evaluate = (data) => {
         i++;
     }
 
+    const equilibriumResult = solveSimultaneousEquations(equilibriumEquations.equation1, equilibriumEquations.equation2)
+
+    const equilibrium ={
+        equations: equilibriumEquations,
+        result: equilibriumResult
+    }
+    results.equilibrium = {...equilibrium}
+
+    
     // Moments
 
     // Reactions
 
     // ShearForce
 
+    console.log(results)
 }

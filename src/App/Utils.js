@@ -71,13 +71,42 @@ export const FEMOptionsForOneEndFixed = {
     8: (load, length)=> ( 5 * load * length ** 2 / 64),
 }
 
+// SIMULTANEOUS EQN SOLVER
+export const solveSimultaneousEquations = (eq1, eq2) => {
+    const {totalFEM: c1, totalTheta1: a1, totalTheta2: b1, theta1, theta2} = eq1
+    const {totalFEM: c2, totalTheta1: a2, totalTheta2: b2} = eq2
+  // Extract coefficients and constants
+    
+
+  // Calculate determinants
+  const det = (a1 * b2) - (a2 * b1);
+  const detX = ((c1 * -1) * b2) - ((c2 * -1) * b1);
+  const detY = (a1 * (c2 * -1)) - (a2 * (c1 * -1));
+
+  // Check if the system has a unique solution
+    if (det === 0) {
+        return "No unique solution";
+    }
+
+  // Calculate solutions
+    const result = {}
+    result[`${theta1}`] = (detX / det).toFixed(2) * 1
+    result[`${theta2}`] = (detY / det).toFixed(2) * 1
+
+    return result
+}
+
 
 // SLOPE DEFLECTION EQUATIONs
 
 export const obtainAntiClockWiseSlopeDeflectionEquation = (fem, length, theta1, theta2, isSettlement) => {
     const deflectionEquation = {
-        femValue: fem,
+        femValue: parseFloat(fem) * -1,
+        theta1: theta1,
+        theta2: theta2,
         coefficientOfEI: 0,
+        coefficientOfTheta1: 2,
+        coefficientOfTheta2: 1,
         equation: ''
     }
     if(isSettlement){
@@ -101,8 +130,8 @@ export const obtainAntiClockWiseSlopeDeflectionEquation = (fem, length, theta1, 
             return deflectionEquation
         }
         if(theta2 === 0 && theta1 !== 0){
-            deflectionEquation.coefficientOfEI = (4 / length).toFixed(2)
-            deflectionEquation.equation = `-${fem} + ${(4 / length).toFixed(2)}EI[${theta1}]`
+            deflectionEquation.coefficientOfEI = (2 / length).toFixed(2)
+            deflectionEquation.equation = `-${fem} + ${(2 / length).toFixed(2)}EI[${deflectionEquation.coefficientOfTheta1}${theta1}]`
             return deflectionEquation
         }
         if(theta1 === 0 && theta2 === 0){
@@ -111,7 +140,7 @@ export const obtainAntiClockWiseSlopeDeflectionEquation = (fem, length, theta1, 
         }
         if(theta1 !== 0 && theta2 !== 0){
             deflectionEquation.coefficientOfEI = (2 / length).toFixed(2)
-            deflectionEquation.equation = `-${fem} + ${(2 / length).toFixed(2)}EI[2${theta1} + ${theta2}]`
+            deflectionEquation.equation = `-${fem} + ${(2 / length).toFixed(2)}EI[${deflectionEquation.coefficientOfTheta1}${theta1} + ${deflectionEquation.coefficientOfTheta2}${theta2}]`
             return deflectionEquation
         }
     }
@@ -119,8 +148,12 @@ export const obtainAntiClockWiseSlopeDeflectionEquation = (fem, length, theta1, 
 
 export const obtainClockWiseSlopeDeflectionEquation = (fem, length, theta1, theta2, isSettlement) => {
     const deflectionEquation = {
-        femValue: fem,
+        femValue: parseFloat(fem) * 1,
+        theta1: theta1,
+        theta2: theta2,
         coefficientOfEI: 0,
+        coefficientOfTheta1: 1,
+        coefficientOfTheta2: 2,
         equation: ''
     }
     
@@ -140,13 +173,13 @@ export const obtainClockWiseSlopeDeflectionEquation = (fem, length, theta1, thet
     }
     else{
         if(theta1 === 0 && theta2 !== 0){
-            deflectionEquation.coefficientOfEI = (4 / length).toFixed(2)
-            deflectionEquation.equation = `${fem} + ${(4 / length).toFixed(2)}EI[${theta2}]`
+            deflectionEquation.coefficientOfEI = (2 / length).toFixed(2)
+            deflectionEquation.equation = `${fem} + ${(2 / length).toFixed(2)}EI[${deflectionEquation.coefficientOfTheta2}${theta2}]`
             return deflectionEquation
         }
         if(theta2 === 0 && theta1 !== 0){
-            deflectionEquation.coefficientOfEI = (2 / length).toFixed(2).toFixed(2)
-            deflectionEquation.equation = `${fem} + ${(2 / length).toFixed(2)}EI[${theta1}]`
+            deflectionEquation.coefficientOfEI = (2 / length).toFixed(2)
+            deflectionEquation.equation = `${fem} + ${(2 / length).toFixed(2)}EI[${deflectionEquation.coefficientOfTheta1}${theta1}]`
             return deflectionEquation
         }
         if(theta1 === 0 && theta2 === 0){
@@ -154,13 +187,62 @@ export const obtainClockWiseSlopeDeflectionEquation = (fem, length, theta1, thet
             return deflectionEquation
         }
         if(theta1 !== 0 && theta2 !== 0){
-            deflectionEquation.coefficientOfEI = (2 / length).toFixed(2).toFixed(2)
-            deflectionEquation.equation = `${fem} + ${(2 / length).toFixed(2)}EI[${theta1} + 2${theta2}]`
+            deflectionEquation.coefficientOfEI = (2 / length).toFixed(2)
+            deflectionEquation.equation = `${fem} + ${(2 / length).toFixed(2)}EI[${deflectionEquation.coefficientOfTheta1}${theta1} + ${deflectionEquation.coefficientOfTheta2}${theta2}]`
             return deflectionEquation
         }
     }
 }
 
 export const generateEquilibriumEquations = (clockWiseEquation, anticlockwiseEquation) => {
-    const totalFEM = clockWiseEquation.femValue + anticlockwiseEquation.femValue
+    const theta1 =  clockWiseEquation.theta1 === 0 ? anticlockwiseEquation.theta1 : clockWiseEquation.theta1
+    const theta2 = anticlockwiseEquation.theta2 === 0 ? clockWiseEquation.theta2 : anticlockwiseEquation.theta2
+        
+    
+    const totalFEM = (clockWiseEquation.femValue) + (anticlockwiseEquation.femValue)
+    let totalClockWiseTheta1
+    let totalClockWiseTheta2
+    let totalAntiClockWiseTheta1
+    let totalAntiClockWiseTheta2
+
+    // clockwise equation
+    if(clockWiseEquation.theta1 === 0){
+        totalClockWiseTheta1 = 0
+    }
+    else{
+        totalClockWiseTheta1 = clockWiseEquation.coefficientOfEI * clockWiseEquation.coefficientOfTheta1
+    }
+    if(clockWiseEquation.theta2 === 0){
+        totalClockWiseTheta2 = 0
+    }
+    else{
+        totalClockWiseTheta2 = clockWiseEquation.coefficientOfEI * clockWiseEquation.coefficientOfTheta2
+    }
+
+    // anticlockwise equation
+    if(anticlockwiseEquation.theta1 === 0){
+        totalAntiClockWiseTheta1 = 0
+    }
+    else{
+        totalAntiClockWiseTheta1 = anticlockwiseEquation.coefficientOfEI * anticlockwiseEquation.coefficientOfTheta1
+    }
+    if(anticlockwiseEquation.theta2 === 0){
+        totalAntiClockWiseTheta2 = 0
+    }
+    else{
+        totalAntiClockWiseTheta2 = anticlockwiseEquation.coefficientOfEI * anticlockwiseEquation.coefficientOfTheta2
+    }
+    
+    const totalTheta1 = totalClockWiseTheta1 + totalAntiClockWiseTheta1 
+    const totalTheta2 = totalClockWiseTheta2 + totalAntiClockWiseTheta2 
+
+    const equilibriumEquation = {
+        totalFEM: totalFEM,
+        theta1: theta1,
+        theta2: theta2,
+        totalTheta1: totalTheta1,
+        totalTheta2: totalTheta2,
+        equation: `${totalTheta1}EI${theta1} + ${totalTheta2}EI${theta2} + (${totalFEM}) = 0`
+    }
+    return equilibriumEquation
 }
