@@ -39,7 +39,18 @@ const Results:React.FC = () => {
                         <p>Equation 2: <span>{results?.equilibrium?.equations?.equation2?.equation}</span></p>
                     </div>
                     <div className="moments">
-                        <h2></h2>
+                        <h2>Moments</h2>
+                        {results.moments.map((value: any, index: any) => {
+                            return (
+                                <div key={index} className='momentsList'>
+                                    <h4>Span <span><em>{value?.spanNumber}</em></span></h4>
+                                    <div>
+                                        <p>Clockwise: <span>{value?.clockwise}</span></p>
+                                        <p>Anti-Clockwise: <span>{value?.antiClockWise}</span></p>
+                                    </div>
+                                </div>
+                            )
+                        })}
                     </div>
                     <div className="reactions">
                         <h2></h2>

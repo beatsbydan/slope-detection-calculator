@@ -126,7 +126,7 @@ export const obtainAntiClockWiseSlopeDeflectionEquation = (fem, length, theta1, 
     else{
         if(theta1 === 0 && theta2 !== 0){
             deflectionEquation.coefficientOfEI = (2 / length).toFixed(2)
-            deflectionEquation.equation =  `-${fem} + ${(2 / length).toFixed(2)}EI[${theta2}]`
+            deflectionEquation.equation =  `-${fem} + ${(2 / length).toFixed(2)}EI[${deflectionEquation.coefficientOfTheta2}${theta2}]`
             return deflectionEquation
         }
         if(theta2 === 0 && theta1 !== 0){
@@ -210,7 +210,7 @@ export const generateEquilibriumEquations = (clockWiseEquation, anticlockwiseEqu
         totalClockWiseTheta1 = 0
     }
     else{
-        totalClockWiseTheta1 = clockWiseEquation.coefficientOfEI * clockWiseEquation.coefficientOfTheta1
+        totalClockWiseTheta1 = clockWiseEquation.coefficientOfEI * clockWiseEquation.coefficientOfTheta1 
     }
     if(clockWiseEquation.theta2 === 0){
         totalClockWiseTheta2 = 0
@@ -245,4 +245,28 @@ export const generateEquilibriumEquations = (clockWiseEquation, anticlockwiseEqu
         equation: `${totalTheta1}EI${theta1} + ${totalTheta2}EI${theta2} + (${totalFEM}) = 0`
     }
     return equilibriumEquation
+}
+
+export const obtainAntiClockwiseMoments = (span, theta1, theta2) => {
+    if(theta1 === 0 && theta2 !== 0){
+        return (span.femValue + (parseFloat(span.coefficientOfEI) * span.coefficientOfTheta2 * theta2)).toFixed(2)
+    }
+    if(theta2 === 0 && theta1 !== 0){
+        return (span.femValue + (parseFloat(span.coefficientOfEI) * span.coefficientOfTheta1 * theta1)).toFixed(2)
+    }
+    if(theta1 === 0 && theta2 === 0){
+        return span.femValue
+    }
+    if(theta1 !== 0 && theta2 !== 0){
+        return (span.femValue + (parseFloat(span.coefficientOfEI) * span.coefficientOfTheta1 * theta1) + (parseFloat(span.coefficientOfEI) * span.coefficientOfTheta2 * theta2)).toFixed(2)
+    }
+}
+
+export const obtainClockwiseMoments = (span, theta1, theta2) => {
+    if(theta1 === 0 && theta2 !== 0){
+
+    }
+    if(theta2 === 0 && theta1 !== 0){}
+    if(theta1 === 0 && theta2 === 0){}
+    if(theta1 !== 0 && theta2 !== 0){}
 }

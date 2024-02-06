@@ -6,7 +6,9 @@ import {
     loadingConditions,
     generateEquilibriumEquations,
     alphabets,
-    solveSimultaneousEquations
+    solveSimultaneousEquations,
+    obtainClockwiseMoments,
+    obtainAntiClockwiseMoments
 } from './Utils'
 
 
@@ -157,8 +159,18 @@ export const evaluate = (data) => {
     }
     results.equilibrium = {...equilibrium}
 
-    
     // Moments
+    const Moments = []
+    for(let spanResult of  results.fixedEndMomentsAndSlopeDeflectionEquations){
+        const {spanNumber, slopeDeflectionEquations} = spanResult
+        const spanMoment = {
+            spanNumber: spanNumber,
+            clockwise: obtainAntiClockwiseMoments(slopeDeflectionEquations.clockWise, equilibriumResult[`thetaB`], equilibriumResult[`thetaC`]),
+            antiClockWise: obtainAntiClockwiseMoments(slopeDeflectionEquations.antiClockWise, equilibriumResult[`thetaB`], equilibriumResult[`thetaC`])
+        }
+        Moments.push(spanMoment)
+    }
+    results.moments = [...Moments]
 
     // Reactions
 
