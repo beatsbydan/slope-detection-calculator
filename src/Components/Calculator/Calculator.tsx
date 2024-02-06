@@ -8,6 +8,7 @@ import Spans from './Spans/Spans';
 import Separator from '../../UI/Separator/Separator';
 import MiniOption from '../../UI/MiniOption/MiniOption';
 import { Context } from '../../Context/Context';
+import {useNavigate} from 'react-router-dom'
 
 
 const Calculator:React.FC = () => {
@@ -26,12 +27,20 @@ const Calculator:React.FC = () => {
         handleSettlementSelection
     } = useContext(Context)
 
+    const navigate = useNavigate()
+
+    const submitHandler = (e: React.FormEvent) => {
+        e.preventDefault()
+        handleSubmit()
+        navigate('/result')
+    }
+
     return (
         <div className='calculator'>
             <PrevNav/>
             <div className="calculatorBody">
                 <h1>Please fill the necessary details</h1>
-                <form action="" onSubmit={handleSubmit}>
+                <form action="" onSubmit={submitHandler}>
                     <h2>Type in your values..</h2>
                     <div className="formInputs--firstSet">
                         <Input

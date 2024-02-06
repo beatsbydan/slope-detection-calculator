@@ -1,0 +1,28 @@
+.results{
+    width: 90%;
+    max-width: 800px;
+    margin:3rem auto;
+    font-family: var(--ff-oswald);
+    color: var(--text-col);
+}
+.results h1{
+    text-align: center;
+}
+.resultValues{
+    margin-top:2rem;
+}
+.results p span{
+    font-weight: 600;
+}
+.spanResultItem{
+    margin-top: 1rem;
+}
+.spanResultItem h5{
+    margin-top: 1.3rem;
+}
+.equilibriumEquations{
+    margin-top:1.2rem;
+}
+.equilibriumEquations h2{
+    margin-bottom: 1rem;
+}

@@ -138,7 +138,7 @@ export const evaluate = (data) => {
 
     results.nodeEquations = [...NodeEquations]
 
-    
+
     const equilibriumEquations = {}
 
     let i = 1
@@ -165,4 +165,5 @@ export const evaluate = (data) => {
     // ShearForce
 
     console.log(results)
+    return results
 }

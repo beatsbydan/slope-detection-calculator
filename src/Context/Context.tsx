@@ -39,6 +39,7 @@ type contextValueProps = {
         [key: string]: string
     },
     loadingConditions: string[],
+    results: any,
     spans: spansType,
     inputErrors: {
         [key: string]: string
@@ -52,7 +53,7 @@ type contextValueProps = {
     saveSpanDetails: (details: spanDetailsType) => void,
     handleFixedFirstNodeSelection: (value: string) => void,
     handleFixedLastNodeSelection: (value: string) => void,
-    handleSubmit: (e: React.FormEvent) => void
+    handleSubmit: () => void
 }
 
 export const Context = createContext<contextValueProps>({
@@ -61,6 +62,7 @@ export const Context = createContext<contextValueProps>({
         spansCount: '',
         spanDetails: []
     },
+    results: {},
     loadingConditions: [],
     inputErrors: {},
     isOpen: false,
@@ -112,6 +114,8 @@ export const ContextProvider:React.FC<contextType> = ({children}) => {
         fixedLastNode: ''
     })
     const [isOpen, setIsOpen] = useState<boolean>(false)
+
+    const [results, setResults] = useState<any>({})
 
     const handleOpen = () => {
         setIsOpen(!isOpen)
@@ -175,14 +179,14 @@ export const ContextProvider:React.FC<contextType> = ({children}) => {
         })
     }
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
+    const handleSubmit = () => {
         const parameters = {
             ...inputFields,
             ...spans
         }
-        console.log(parameters)
-        evaluate(parameters)
+        // console.log(parameters)
+        const currentResult = evaluate(parameters)
+        setResults(currentResult)
     }
 
     const value = {
@@ -190,6 +194,7 @@ export const ContextProvider:React.FC<contextType> = ({children}) => {
         spans,
         inputErrors,
         isOpen,
+        results,
         loadingConditions,
         handleOpen,
         handleChange,
