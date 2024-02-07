@@ -58,7 +58,7 @@ export const FEMOptionsForBothEndsFixed = {
     } 
 }
 
-// - One end fixed
+// - One end fixed.
 
 export const FEMOptionsForOneEndFixed = {
     1: (load, length)=> (3 * load * length) / 16,
