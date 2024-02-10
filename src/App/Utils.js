@@ -89,9 +89,16 @@ export const solveSimultaneousEquations = (eq1, eq2) => {
     }
 
   // Calculate solutions
-    const result = {}
-    result[`${theta1}`] = (detX / det).toFixed(2) * 1
-    result[`${theta2}`] = (detY / det).toFixed(2) * 1
+    const result = [
+        {
+            theta: theta1,
+            value: (detX / det).toFixed(2) * 1
+        },
+        {
+            theta: theta2,
+            value: (detY / det).toFixed(2) * 1
+        }
+    ]
 
     return result
 }
@@ -247,7 +254,8 @@ export const generateEquilibriumEquations = (clockWiseEquation, anticlockwiseEqu
     return equilibriumEquation
 }
 
-export const obtainAntiClockwiseMoments = (span, theta1, theta2) => {
+// Moments
+export const obtainMoments = (span, theta1, theta2) => {
     if(theta1 === 0 && theta2 !== 0){
         return (span.femValue + (parseFloat(span.coefficientOfEI) * span.coefficientOfTheta2 * theta2)).toFixed(2)
     }
@@ -262,11 +270,85 @@ export const obtainAntiClockwiseMoments = (span, theta1, theta2) => {
     }
 }
 
-export const obtainClockwiseMoments = (span, theta1, theta2) => {
-    if(theta1 === 0 && theta2 !== 0){
+// Reactions
+export const obtainReactions = (spanMoment, currentSpan) => {
+    const a  = parseFloat(currentSpan.a)
+    const b  = parseFloat(currentSpan.b)
+    const loadVal = parseFloat(currentSpan.load)
+    const lengthVal = parseFloat(currentSpan.length) 
+    const clockWiseValue = parseFloat(spanMoment.clockwise) 
+    const antiClockWiseValue = parseFloat(spanMoment.antiClockWise)
 
+    let r1, r2
+    const conditionIndex = loadingConditions.findIndex(condition => condition === currentSpan.condition)
+
+    if(conditionIndex === 1){
+        r1 = (-1 * ((-1 * loadVal * lengthVal / 2) + clockWiseValue + antiClockWiseValue) / lengthVal).toFixed(2)
+        r2 = (loadVal - r1)
     }
-    if(theta2 === 0 && theta1 !== 0){}
-    if(theta1 === 0 && theta2 === 0){}
-    if(theta1 !== 0 && theta2 !== 0){}
+    else if(conditionIndex === 2){
+        r1 = (-1 * ((-1 * loadVal * lengthVal * b) + clockWiseValue + antiClockWiseValue) / lengthVal).toFixed(2)
+        r2 = (loadVal - r1)
+    }
+    else if(conditionIndex === 3){
+        r1 = (-1 * ((-1 * loadVal * 2 * lengthVal / 3) + (-1 * loadVal * lengthVal / 3) + clockWiseValue + antiClockWiseValue) / lengthVal).toFixed(2)
+        r2 = ((2 * loadVal) -  r1).toFixed(2)
+    }
+    else if(conditionIndex === 4){
+        r1 = (-1 * ((-1 * loadVal * 3 * lengthVal / 4) + (-1 * loadVal * 2 * lengthVal / 4) + (-1 * loadVal * lengthVal / 4)  + clockWiseValue + antiClockWiseValue) / lengthVal).toFixed(2)
+        r2 = ((3 * loadVal) -  r1).toFixed(2)
+    }
+    else if(conditionIndex === 5){
+        r1 = (-1 * ((-1 * loadVal * lengthVal * lengthVal / 2) + clockWiseValue + antiClockWiseValue) / lengthVal).toFixed(2)
+        r2 = ((lengthVal * loadVal) -  r1).toFixed(2)
+    }
+    else if(conditionIndex === 6){
+        r1 = (-1 * ((-1 * loadVal * lengthVal / 2 * lengthVal / 4) + clockWiseValue + antiClockWiseValue)).toFixed(2)
+        r2 = ((lengthVal * loadVal / 2) - r1).toFixed(2)
+    }
+    else if(conditionIndex === 7){
+        r1 = (-1 * ((-1 * loadVal * lengthVal / 2 * lengthVal * 3 / 4) + clockWiseValue + antiClockWiseValue)).toFixed(2)
+        r2 = ((lengthVal * loadVal / 2) - r1).toFixed(2)
+    }
+    else if(conditionIndex === 8){}
+    else if(conditionIndex === 9){}
+    else if(conditionIndex === 10){}
+    else{
+        
+    }
+
+    return {
+        r1: r1,
+        r2: r2
+    }
+}
+
+export const obtainShearForces = (reactions) => {
+    const shearForces = []
+    let calculatedForces = {}
+    let newForce;
+
+    let i = 0
+    let sum = 0
+    for(let reaction of reactions){
+        const {spanNumber, currentSpanDetails, reactions} = reaction
+        const conditionIndex = loadingConditions.findIndex(condition => condition === currentSpanDetails.condition)
+        // calculatedForces[i] = parseFloat(reactions.r1)
+        if(spanNumber === '1'){
+            calculatedForces[i] = parseFloat(reactions.r1)
+            calculatedForces[i + 1] = calculatedForces[i] 
+        }
+        if(!calculatedForces[i]){
+            calculatedForces[i] = ''
+        }
+
+        newForce = {
+            node: alphabets[i],
+            value: sum
+        }
+
+        i++
+    }
+
+    return shearForces
 }

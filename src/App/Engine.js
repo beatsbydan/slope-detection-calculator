@@ -7,8 +7,9 @@ import {
     generateEquilibriumEquations,
     alphabets,
     solveSimultaneousEquations,
-    obtainClockwiseMoments,
-    obtainAntiClockwiseMoments
+    obtainMoments,
+    obtainReactions,
+    obtainShearForces
 } from './Utils'
 
 
@@ -26,12 +27,14 @@ export const evaluate = (data) => {
     } = data
 
     const bothEndsFixed = fixedFirstNode.toLowerCase() === 'yes' && fixedLastNode.toLowerCase() === "yes"
+    const isSettlement = settlement.toLowerCase() === "yes"
     
     const results = {}
 
     // Calculate Fixed End Moments & Slope Deflection Equations.
     const fixedEndMomentsAndSlopeDeflectionEquations = []
 
+    /*1.*/
     for(let spanDetail of spanDetails){
 
         // Fixed End Moments
@@ -66,7 +69,6 @@ export const evaluate = (data) => {
         let theta1
         let theta2
         let angularDisplacement
-        const isSettlement = settlement.toLowerCase() === "yes"
 
         if(!isSettlement){
             angularDisplacement = 0
@@ -141,20 +143,18 @@ export const evaluate = (data) => {
     results.nodeEquations = [...NodeEquations]
 
 
-    const equilibriumEquations = {}
+    const equilibriumEquations = []
 
-    let i = 1
     const evaluatingNodes = NodeEquations.filter(nodeEquation => (nodeEquation.nodeNumber !== '1' && nodeEquation.nodeNumber !== (parseFloat(spansCount)+ 1).toString()))
     
     for(let node of evaluatingNodes){
-        equilibriumEquations[`equation${i}`]= generateEquilibriumEquations(node.clockwise, node.antiClockwise)
-        i++;
+        equilibriumEquations.push(generateEquilibriumEquations(node.clockwise, node.antiClockwise))
     }
 
-    const equilibriumResult = solveSimultaneousEquations(equilibriumEquations.equation1, equilibriumEquations.equation2)
+    const equilibriumResult = [...solveSimultaneousEquations(equilibriumEquations[0], equilibriumEquations[1])]
 
     const equilibrium ={
-        equations: equilibriumEquations,
+        equations: [...equilibriumEquations],
         result: equilibriumResult
     }
     results.equilibrium = {...equilibrium}
@@ -165,16 +165,33 @@ export const evaluate = (data) => {
         const {spanNumber, slopeDeflectionEquations} = spanResult
         const spanMoment = {
             spanNumber: spanNumber,
-            clockwise: obtainAntiClockwiseMoments(slopeDeflectionEquations.clockWise, equilibriumResult[`thetaB`], equilibriumResult[`thetaC`]),
-            antiClockWise: obtainAntiClockwiseMoments(slopeDeflectionEquations.antiClockWise, equilibriumResult[`thetaB`], equilibriumResult[`thetaC`])
+            clockwise: obtainMoments(slopeDeflectionEquations.clockWise, equilibriumResult[0].value, equilibriumResult[1].value),
+            antiClockWise: obtainMoments(slopeDeflectionEquations.antiClockWise, equilibriumResult[0].value, equilibriumResult[1].value)
         }
         Moments.push(spanMoment)
     }
     results.moments = [...Moments]
 
     // Reactions
+    const Reactions = []
+    for (let spanMoment of results.moments){
+        const {spanNumber} = spanMoment
+        const currentSpan = spanDetails.find(span => span.spanNumber === spanNumber)
+        const spanReaction = {
+            spanNumber: spanNumber,
+            currentSpanDetails: currentSpan,
+            reactions: {...obtainReactions(spanMoment, currentSpan)}
+        }
+        Reactions.push(spanReaction)
+    }
+
+    results.reactions = [...Reactions]
 
     // ShearForce
+    const shearForces = [...obtainShearForces(results.reactions)]
+    results.shearForces = [...shearForces]
+
+    // Diagrams
 
     console.log(results)
     return results

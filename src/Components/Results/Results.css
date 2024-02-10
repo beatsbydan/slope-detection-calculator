@@ -11,7 +11,7 @@
 .resultValues{
     margin-top:2rem;
 }
-.results p span{
+.results p span, .equilibriumEquations p span{
     font-weight: 600;
 }
 .spanResultItem{
@@ -26,9 +26,12 @@
 .equilibriumEquations h2{
     margin-bottom: 1rem;
 }
+.equilibriumEquations h2, .reactions h2{
+    margin-top: 1.3rem;
+}
 .moments{
     margin-top: 1rem;
 }
-.momentsList{
+.momentsList, .reactionsList{
     margin-top: 1.3rem;
 }
