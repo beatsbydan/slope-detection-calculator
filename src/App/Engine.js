@@ -67,10 +67,11 @@ export const evaluate = (data) => {
         let theta2
         let angularDisplacement
         const isSettlement = settlement.toLowerCase() === "yes"
-
+        // Handling Settlement
         if(!isSettlement){
             angularDisplacement = 0
         }
+        // Calculating Slope Deflection Equations
         if(spanNumber !== '1' && spanNumber !== spansCount ){
             clockWiseEquation = obtainClockWiseSlopeDeflectionEquation(FEM, lengthVal, `theta${alphabets[parseFloat(spanNumber) -1]}`, `theta${alphabets[parseFloat(spanNumber)]}`, isSettlement )
             antiClockWiseEquation = obtainAntiClockWiseSlopeDeflectionEquation(FEM, lengthVal, `theta${alphabets[parseFloat(spanNumber) -1]}`, `theta${alphabets[parseFloat(spanNumber)]}`, isSettlement)

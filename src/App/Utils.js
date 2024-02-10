@@ -24,34 +24,42 @@ export const alphabets = [
 // - Both ends fixed
 
 export const FEMOptionsForBothEndsFixed = {
+    // For point load
     1: {
         node: (load, length) => ((load * length) / 8),
         lastNode: (load, length) => ((load * length) / 8) 
     },
+    // For point load at on equal distance
     2: {
         node: (load, length, a, b) => (load * b ** 2 * a) / (length ** 2),
         lastNode: (load, length, a, b) => (load * a ** 2 * b) / (length ** 2)
     },
+    // 2 point load at equal distance
     3: {
         node: (load, length) => (2 * load * length) / 9 ,
         lastNode: (load, length) => (2 * load * length) / 9 
     },
+    // 3 point load at equal distance
     4: {
         node: (load, length) => (15 * load * length) / 48,
         lastNode: (load, length) => (15 * load * length) / 48
     }, 
+    // Uniformly distributed load
     5: {
         node: (load, length) => (load * length ** 2) / 12,
         lastNode: (load, length) => (load * length ** 2) / 12
     }, 
+    // ULD at half distance
     6: {
         node: (load, length) => (11 * load * length ** 2) / 192,
         lastNode: (load, length) => (5 * load * length ** 2) / 192
     }, 
+    // Uniformly varing load
     7: {
         node: (load, length) => (load * length ** 2) / 20 ,
         lastNode: (load, length) => (load * length ** 2) / 30
     }, 
+    // uniformly triangle load variance
     8: {
         node: (load, length) => (5 * load * length ** 2) / 96,
         lastNode: (load, length) => (5 * load * length ** 2) / 96
@@ -124,6 +132,7 @@ export const obtainAntiClockWiseSlopeDeflectionEquation = (fem, length, theta1, 
         }
     }
     else{
+        // for ends that are fixed or hinged
         if(theta1 === 0 && theta2 !== 0){
             deflectionEquation.coefficientOfEI = (2 / length).toFixed(2)
             deflectionEquation.equation =  `-${fem} + ${(2 / length).toFixed(2)}EI[${deflectionEquation.coefficientOfTheta2}${theta2}]`
@@ -156,7 +165,7 @@ export const obtainClockWiseSlopeDeflectionEquation = (fem, length, theta1, thet
         coefficientOfTheta2: 2,
         equation: ''
     }
-    
+    // settlement
     if(isSettlement){
         if(theta1 === 0){
 
@@ -172,6 +181,7 @@ export const obtainClockWiseSlopeDeflectionEquation = (fem, length, theta1, thet
         }
     }
     else{
+        // ends that are fixed or hinged
         if(theta1 === 0 && theta2 !== 0){
             deflectionEquation.coefficientOfEI = (2 / length).toFixed(2)
             deflectionEquation.equation = `${fem} + ${(2 / length).toFixed(2)}EI[${deflectionEquation.coefficientOfTheta2}${theta2}]`
@@ -194,11 +204,15 @@ export const obtainClockWiseSlopeDeflectionEquation = (fem, length, theta1, thet
     }
 }
 
+// constructs the equilibrium equation using these values and
+//  returns an object containing the total fixed end moment,
+//  rotational deflections, and the equilibrium equation as a string
+
 export const generateEquilibriumEquations = (clockWiseEquation, anticlockwiseEquation) => {
     const theta1 =  clockWiseEquation.theta1 === 0 ? anticlockwiseEquation.theta1 : clockWiseEquation.theta1
     const theta2 = anticlockwiseEquation.theta2 === 0 ? clockWiseEquation.theta2 : anticlockwiseEquation.theta2
         
-    
+    // total FEM
     const totalFEM = (clockWiseEquation.femValue) + (anticlockwiseEquation.femValue)
     let totalClockWiseTheta1
     let totalClockWiseTheta2
@@ -261,7 +275,8 @@ export const obtainAntiClockwiseMoments = (span, theta1, theta2) => {
         return (span.femValue + (parseFloat(span.coefficientOfEI) * span.coefficientOfTheta1 * theta1) + (parseFloat(span.coefficientOfEI) * span.coefficientOfTheta2 * theta2)).toFixed(2)
     }
 }
-
+// checking if there's no rotational deflection at one end (theta1 === 0)
+//  but there is a non-zero rotational deflection at the other end (theta2 !== 0).
 export const obtainClockwiseMoments = (span, theta1, theta2) => {
     if(theta1 === 0 && theta2 !== 0){
 
