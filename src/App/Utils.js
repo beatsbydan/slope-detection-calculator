@@ -211,15 +211,7 @@ export const obtainClockWiseSlopeDeflectionEquation = (fem, length, theta1, thet
     }
 }
 
-<<<<<<< HEAD
-// constructs the equilibrium equation using these values and
-//  returns an object containing the total fixed end moment,
-//  rotational deflections, and the equilibrium equation as a string
-
-export const generateEquilibriumEquations = (clockWiseEquation, anticlockwiseEquation) => {
-=======
 export const generateEquilibriumEquations = (clockWiseEquation, anticlockwiseEquation, nodeNumber) => {
->>>>>>> c8e717177d01af9e0d55b6d86c5157aabe160840
     const theta1 =  clockWiseEquation.theta1 === 0 ? anticlockwiseEquation.theta1 : clockWiseEquation.theta1
     const theta2 = anticlockwiseEquation.theta2 === 0 ? clockWiseEquation.theta2 : anticlockwiseEquation.theta2
         
@@ -263,12 +255,6 @@ export const obtainMoments = (span, theta1, theta2) => {
         return (span.femValue + (parseFloat(span.coefficientOfEI) * span.coefficientOfTheta1 * theta1) + (parseFloat(span.coefficientOfEI) * span.coefficientOfTheta2 * theta2)).toFixed(2)
     }
 }
-<<<<<<< HEAD
-// checking if there's no rotational deflection at one end (theta1 === 0)
-//  but there is a non-zero rotational deflection at the other end (theta2 !== 0).
-export const obtainClockwiseMoments = (span, theta1, theta2) => {
-    if(theta1 === 0 && theta2 !== 0){
-=======
 
 // Reactions
 export const obtainReactions = (spanMoment, currentSpan) => {
@@ -353,7 +339,6 @@ const getForce = (currentSpan, spansCount) => {
     else if(conditionIndex === 9){}
     else if(conditionIndex === 10){}
     else{
->>>>>>> c8e717177d01af9e0d55b6d86c5157aabe160840
 
     }
 
