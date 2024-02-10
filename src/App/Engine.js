@@ -69,12 +69,6 @@ export const evaluate = (data) => {
         let theta1
         let theta2
         let angularDisplacement
-<<<<<<< HEAD
-        const isSettlement = settlement.toLowerCase() === "yes"
-        // Handling Settlement
-=======
-
->>>>>>> c8e717177d01af9e0d55b6d86c5157aabe160840
         if(!isSettlement){
             angularDisplacement = 0
         }
