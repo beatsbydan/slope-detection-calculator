@@ -77,7 +77,14 @@ const Results:React.FC = () => {
                         })}
                     </div>
                     <div className="shearForces">
-                        <h2></h2>
+                        <h2>ShearForces</h2>
+                        {results?.shearForces?.map((value: any, index: number) => {
+                            return (
+                                <div key={index} className='shearForcesList'>
+                                    <p>Node-<span>{value?.node}</span>: <span>{value?.value}KN</span></p>
+                                </div>
+                            )
+                        })}
                     </div>
                 </div>
             </div>

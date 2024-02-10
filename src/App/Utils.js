@@ -146,8 +146,8 @@ export const obtainAntiClockWiseSlopeDeflectionEquation = (fem, length, theta1, 
             return deflectionEquation
         }
         if(theta1 !== 0 && theta2 !== 0){
-            deflectionEquation.coefficientOfEI = (2 / length).toFixed(2)
-            deflectionEquation.equation = `-${fem} + ${(2 / length).toFixed(2)}EI[${deflectionEquation.coefficientOfTheta1}${theta1} + ${deflectionEquation.coefficientOfTheta2}${theta2}]`
+            deflectionEquation.coefficientOfEI = (4 / length).toFixed(2)
+            deflectionEquation.equation = `-${fem} + ${(4 / length).toFixed(2)}EI[${deflectionEquation.coefficientOfTheta1}${theta1} + ${deflectionEquation.coefficientOfTheta2}${theta2}]`
             return deflectionEquation
         }
     }
@@ -194,55 +194,31 @@ export const obtainClockWiseSlopeDeflectionEquation = (fem, length, theta1, thet
             return deflectionEquation
         }
         if(theta1 !== 0 && theta2 !== 0){
-            deflectionEquation.coefficientOfEI = (2 / length).toFixed(2)
-            deflectionEquation.equation = `${fem} + ${(2 / length).toFixed(2)}EI[${deflectionEquation.coefficientOfTheta1}${theta1} + ${deflectionEquation.coefficientOfTheta2}${theta2}]`
+            deflectionEquation.coefficientOfEI = (4 / length).toFixed(2)
+            deflectionEquation.equation = `${fem} + ${(4 / length).toFixed(2)}EI[${deflectionEquation.coefficientOfTheta1}${theta1} + ${deflectionEquation.coefficientOfTheta2}${theta2}]`
             return deflectionEquation
         }
     }
 }
 
-export const generateEquilibriumEquations = (clockWiseEquation, anticlockwiseEquation) => {
+export const generateEquilibriumEquations = (clockWiseEquation, anticlockwiseEquation, nodeNumber) => {
     const theta1 =  clockWiseEquation.theta1 === 0 ? anticlockwiseEquation.theta1 : clockWiseEquation.theta1
     const theta2 = anticlockwiseEquation.theta2 === 0 ? clockWiseEquation.theta2 : anticlockwiseEquation.theta2
         
     
     const totalFEM = (clockWiseEquation.femValue) + (anticlockwiseEquation.femValue)
-    let totalClockWiseTheta1
-    let totalClockWiseTheta2
-    let totalAntiClockWiseTheta1
-    let totalAntiClockWiseTheta2
+    let totalTheta1
+    let totalTheta2
 
-    // clockwise equation
-    if(clockWiseEquation.theta1 === 0){
-        totalClockWiseTheta1 = 0
+    if(nodeNumber === '2'){
+        totalTheta1 = (parseFloat(clockWiseEquation.coefficientOfEI) * parseFloat(clockWiseEquation.coefficientOfTheta2)) + (parseFloat(anticlockwiseEquation.coefficientOfEI) * parseFloat(anticlockwiseEquation.coefficientOfTheta1))
+        totalTheta2 = (parseFloat(anticlockwiseEquation.coefficientOfEI) * parseFloat(anticlockwiseEquation.coefficientOfTheta2))
     }
-    else{
-        totalClockWiseTheta1 = clockWiseEquation.coefficientOfEI * clockWiseEquation.coefficientOfTheta1 
-    }
-    if(clockWiseEquation.theta2 === 0){
-        totalClockWiseTheta2 = 0
-    }
-    else{
-        totalClockWiseTheta2 = clockWiseEquation.coefficientOfEI * clockWiseEquation.coefficientOfTheta2
-    }
-
-    // anticlockwise equation
-    if(anticlockwiseEquation.theta1 === 0){
-        totalAntiClockWiseTheta1 = 0
-    }
-    else{
-        totalAntiClockWiseTheta1 = anticlockwiseEquation.coefficientOfEI * anticlockwiseEquation.coefficientOfTheta1
-    }
-    if(anticlockwiseEquation.theta2 === 0){
-        totalAntiClockWiseTheta2 = 0
-    }
-    else{
-        totalAntiClockWiseTheta2 = anticlockwiseEquation.coefficientOfEI * anticlockwiseEquation.coefficientOfTheta2
-    }
+    else if(nodeNumber === '3'){
+        totalTheta1 = (parseFloat(clockWiseEquation.coefficientOfEI) * parseFloat(clockWiseEquation.coefficientOfTheta1))
+        totalTheta2 = (parseFloat(clockWiseEquation.coefficientOfEI) * parseFloat(clockWiseEquation.coefficientOfTheta2)) + (parseFloat(anticlockwiseEquation.coefficientOfEI) * parseFloat(anticlockwiseEquation.coefficientOfTheta1))
     
-    const totalTheta1 = totalClockWiseTheta1 + totalAntiClockWiseTheta1 
-    const totalTheta2 = totalClockWiseTheta2 + totalAntiClockWiseTheta2 
-
+    }
     const equilibriumEquation = {
         totalFEM: totalFEM,
         theta1: theta1,
@@ -256,16 +232,16 @@ export const generateEquilibriumEquations = (clockWiseEquation, anticlockwiseEqu
 
 // Moments
 export const obtainMoments = (span, theta1, theta2) => {
-    if(theta1 === 0 && theta2 !== 0){
-        return (span.femValue + (parseFloat(span.coefficientOfEI) * span.coefficientOfTheta2 * theta2)).toFixed(2)
+    if(span.theta1 === 0 && span.theta2 !== 0){
+        return (span.femValue + (parseFloat(span.coefficientOfEI) * span.coefficientOfTheta2 * theta1)).toFixed(2)
     }
-    if(theta2 === 0 && theta1 !== 0){
-        return (span.femValue + (parseFloat(span.coefficientOfEI) * span.coefficientOfTheta1 * theta1)).toFixed(2)
+    if(span.theta2 === 0 && span.theta1 !== 0){
+        return (span.femValue + (parseFloat(span.coefficientOfEI) * span.coefficientOfTheta1 * theta2)).toFixed(2)
     }
-    if(theta1 === 0 && theta2 === 0){
+    if(span.theta1 === 0 && span.theta2 === 0){
         return span.femValue
     }
-    if(theta1 !== 0 && theta2 !== 0){
+    if(span.theta1 !== 0 && span.theta2 !== 0){
         return (span.femValue + (parseFloat(span.coefficientOfEI) * span.coefficientOfTheta1 * theta1) + (parseFloat(span.coefficientOfEI) * span.coefficientOfTheta2 * theta2)).toFixed(2)
     }
 }
@@ -323,30 +299,91 @@ export const obtainReactions = (spanMoment, currentSpan) => {
     }
 }
 
-export const obtainShearForces = (reactions) => {
+const getForce = (currentSpan, spansCount) => {
+    const loadVal = parseFloat(currentSpan.load)
+    const lengthVal = parseFloat(currentSpan.length) 
+    const conditionIndex = loadingConditions.findIndex(condition => condition === currentSpan.condition)
+    
+    if(conditionIndex === 1){
+        return (-1 * loadVal).toFixed(2)
+    }
+    else if(conditionIndex === 2){
+        return (-1 * loadVal).toFixed(2)
+    }
+    else if(conditionIndex === 3){
+        return (-1 * (2 * loadVal)).toFixed(2)
+    }
+    else if(conditionIndex === 4){
+        return (-1 * (3 * loadVal)).toFixed(2)
+    }
+    else if(conditionIndex === 5){
+        return (-1 * (loadVal * lengthVal)).toFixed(2)
+    }
+    else if(conditionIndex === 6){
+        return (-1 * (loadVal * lengthVal / 2)).toFixed(2)
+    }
+    else if(conditionIndex === 7){
+        return (-1 * (loadVal * lengthVal / 2)).toFixed(2)
+    }
+    else if(conditionIndex === 8){}
+    else if(conditionIndex === 9){}
+    else if(conditionIndex === 10){}
+    else{
+
+    }
+
+}
+
+export const obtainShearForces = (reactions, spansCount) => {
     const shearForces = []
     let calculatedForces = {}
     let newForce;
-
     let i = 0
-    let sum = 0
+
     for(let reaction of reactions){
         const {spanNumber, currentSpanDetails, reactions} = reaction
-        const conditionIndex = loadingConditions.findIndex(condition => condition === currentSpanDetails.condition)
-        // calculatedForces[i] = parseFloat(reactions.r1)
+        const r1Value = parseFloat(reactions.r1)
+        const r2Value = parseFloat(reactions.r2)
+
         if(spanNumber === '1'){
-            calculatedForces[i] = parseFloat(reactions.r1)
-            calculatedForces[i + 1] = calculatedForces[i] 
+            const currentForce = parseFloat(getForce(currentSpanDetails, spansCount))
+            calculatedForces[i] = r1Value
+            calculatedForces[i + 0.5] = parseFloat(calculatedForces[i]) + currentForce + r2Value
+            newForce = {
+                node: alphabets[i],
+                value: calculatedForces[i]
+            }
+            shearForces.push(newForce)
         }
-        if(!calculatedForces[i]){
-            calculatedForces[i] = ''
+        else if(spanNumber === spansCount){
+            const currentForce = parseFloat(getForce(currentSpanDetails, spansCount))
+            console.log(currentForce, r2Value)
+            calculatedForces[i] = parseFloat(calculatedForces[i - 0.5]) + r1Value
+            console.log(calculatedForces[i])
+            const lastNodeForce = parseFloat(calculatedForces[i]) + currentForce + r2Value
+            console.log(lastNodeForce)
+            const newForceNode1 = {
+                node: alphabets[i],
+                value: calculatedForces[i]
+            }
+            shearForces.push(newForceNode1)
+            const newForceNode2 = {
+                node: alphabets[i + 1],
+                value: lastNodeForce.toFixed(2)
+            }
+            shearForces.push(newForceNode2)
         }
-
-        newForce = {
-            node: alphabets[i],
-            value: sum
+        else{
+            const currentForce = parseFloat(getForce(currentSpanDetails, spansCount))
+            calculatedForces[i] = parseFloat(calculatedForces[i - 0.5]) + r1Value
+            calculatedForces[i + 0.5] = parseFloat(calculatedForces[i]) + currentForce + r2Value
+            newForce = {
+                node: alphabets[i],
+                value: calculatedForces[i]
+            }
+            shearForces.push(newForce)
         }
-
+        
         i++
     }
 

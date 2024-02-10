@@ -148,7 +148,7 @@ export const evaluate = (data) => {
     const evaluatingNodes = NodeEquations.filter(nodeEquation => (nodeEquation.nodeNumber !== '1' && nodeEquation.nodeNumber !== (parseFloat(spansCount)+ 1).toString()))
     
     for(let node of evaluatingNodes){
-        equilibriumEquations.push(generateEquilibriumEquations(node.clockwise, node.antiClockwise))
+        equilibriumEquations.push(generateEquilibriumEquations(node.clockwise, node.antiClockwise, node.nodeNumber))
     }
 
     const equilibriumResult = [...solveSimultaneousEquations(equilibriumEquations[0], equilibriumEquations[1])]
@@ -188,7 +188,7 @@ export const evaluate = (data) => {
     results.reactions = [...Reactions]
 
     // ShearForce
-    const shearForces = [...obtainShearForces(results.reactions)]
+    const shearForces = [...obtainShearForces(results.reactions, spansCount)]
     results.shearForces = [...shearForces]
 
     // Diagrams
