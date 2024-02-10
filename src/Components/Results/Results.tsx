@@ -35,28 +35,56 @@ const Results:React.FC = () => {
                     </div>
                     <div className="equilibriumEquations">
                         <h2>Equilibrium-Equations</h2>
-                        <p>Equation 1: <span>{results?.equilibrium?.equations?.equation1?.equation}</span></p>
-                        <p>Equation 2: <span>{results?.equilibrium?.equations?.equation2?.equation}</span></p>
+                        {results?.equilibrium?.equations?.map((value: any, index: number) => {
+                            return (
+                                <p key={index}>Equation{index + 1}: {value?.equation}</p>
+                            )
+                        })}
+                        
+                        <h2>Equilibrium-Results</h2>
+                        {results?.equilibrium?.result?.map((value: any, index: number)=>{
+                            return (
+                                <p key={index}>{value?.theta}: <span>{value?.value}</span></p>
+                            )
+                        })}
                     </div>
                     <div className="moments">
                         <h2>Moments</h2>
-                        {results.moments.map((value: any, index: any) => {
+                        {results?.moments?.map((value: any, index: any) => {
                             return (
                                 <div key={index} className='momentsList'>
                                     <h4>Span <span><em>{value?.spanNumber}</em></span></h4>
                                     <div>
-                                        <p>Clockwise: <span>{value?.clockwise}</span></p>
-                                        <p>Anti-Clockwise: <span>{value?.antiClockWise}</span></p>
+                                        <p>Clockwise: <span>{value?.clockwise}KNm</span></p>
+                                        <p>Anti-Clockwise: <span>{value?.antiClockWise}KNm</span></p>
                                     </div>
                                 </div>
                             )
                         })}
                     </div>
                     <div className="reactions">
-                        <h2></h2>
+                        <h2>Reactions</h2>
+                        {results?.reactions?.map((value: any, index: number) => {
+                            return (
+                                <div key={index} className = "reactionsList">
+                                    <h4>Span <span><em>{value?.spanNumber}</em></span></h4>
+                                    <div>
+                                        <p>first-Node: <span>{value?.reactions?.r1}KN</span></p>
+                                        <p>Last-Node: <span>{value?.reactions?.r2}KN</span></p>
+                                    </div>
+                                </div>
+                            )
+                        })}
                     </div>
                     <div className="shearForces">
-                        <h2></h2>
+                        <h2>ShearForces</h2>
+                        {results?.shearForces?.map((value: any, index: number) => {
+                            return (
+                                <div key={index} className='shearForcesList'>
+                                    <p>Node-<span>{value?.node}</span>: <span>{value?.value}KN</span></p>
+                                </div>
+                            )
+                        })}
                     </div>
                 </div>
             </div>
