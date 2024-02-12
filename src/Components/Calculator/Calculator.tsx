@@ -1,5 +1,4 @@
 import React, { useContext } from 'react'
-import './Calculator.css'
 import { PrevNav } from '../../UI/PrevNav/PrevNav';
 import Transition from '../../UI/Transition/Transition';
 import Button from '../../UI/Button/Button';
@@ -9,7 +8,7 @@ import Separator from '../../UI/Separator/Separator';
 import MiniOption from '../../UI/MiniOption/MiniOption';
 import { Context } from '../../Context/Context';
 import {useNavigate} from 'react-router-dom'
-
+import './Calculator.css'
 
 const Calculator:React.FC = () => {
     const {

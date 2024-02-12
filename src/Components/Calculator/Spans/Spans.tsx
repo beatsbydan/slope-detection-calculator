@@ -65,16 +65,12 @@ const SpanItem:React.FC<{span: number}> = (props) => {
     })
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {name, value} = e.target
-        setSpanInputs(prev => {
-            return {...prev, [name]: value}
-        })
+        setSpanInputs({...spanInputs, [name]: value})
     }
     const selectSpanCondition = (value: string) => {
-        setSpanInputs(prev => {
-            return {
-                ...prev,
-                condition: value
-            }
+        setSpanInputs({
+            ...spanInputs,
+            condition: value
         })
     }
     const saveSpanCondition = () => {

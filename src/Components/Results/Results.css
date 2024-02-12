@@ -26,7 +26,7 @@
 .equilibriumEquations h2{
     margin-bottom: 1rem;
 }
-.equilibriumEquations h2, .reactions h2, .shearForces h2{
+.equilibriumEquations h2, .reactions h2, .shearForces h2, .diagrams h2{
     margin-top: 1.3rem;
 }
 .moments{

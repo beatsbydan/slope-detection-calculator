@@ -184,7 +184,6 @@ export const ContextProvider:React.FC<contextType> = ({children}) => {
             ...inputFields,
             ...spans
         }
-        // console.log(parameters)
         const currentResult = evaluate(parameters)
         setResults(currentResult)
     }

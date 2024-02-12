@@ -3,10 +3,22 @@ import { Context } from '../../Context/Context'
 import './Results.css'
 import Transition from '../../UI/Transition/Transition'
 import { PrevNav } from '../../UI/PrevNav/PrevNav'
+import Diagram from '../../UI/Diagrams/Diagrams'
 
 const Results:React.FC = () => {
     const {results} = useContext(Context)
+    const shearForceLabels = results?.shearForces?.map((force: any) => force?.node)
+    const shearForceValues = results?.shearForces?.map((force: any) => force?.value)
 
+    const momentLabels = []
+    const momentValues = []
+    for(let moment of results?.moments){
+        momentLabels.push('')
+        momentLabels.push('')
+        momentValues.push(parseFloat(moment.antiClockWise))
+        momentValues.push(parseFloat(moment.clockwise))
+    }
+    
     return (
         <div className='results'>
             <PrevNav/>
@@ -37,7 +49,7 @@ const Results:React.FC = () => {
                         <h2>Equilibrium-Equations</h2>
                         {results?.equilibrium?.equations?.map((value: any, index: number) => {
                             return (
-                                <p key={index}>Equation{index + 1}: {value?.equation}</p>
+                                <p key={index}>Equation{index + 1}: <span>{value?.equation}</span></p>
                             )
                         })}
                         
@@ -85,6 +97,26 @@ const Results:React.FC = () => {
                                 </div>
                             )
                         })}
+                    </div>
+                    <div className="diagrams">
+                        <div className="shearForceDiagrams">
+                            <h2>Shear-Force-Diagram</h2>
+                            <Diagram
+                                labels={shearForceLabels}
+                                data={shearForceValues}
+                                label='Shear-Force'
+                                text = 'Shear Force (KN)'    
+                            />
+                        </div>
+                        <div className="bendingMomentDiagrams">
+                            <h2>Bending-Moment-Diagram</h2>
+                            <Diagram
+                                labels={momentLabels}
+                                data={momentValues}   
+                                label='Bending-Moment'
+                                text ='Bending Moment (KNm)' 
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

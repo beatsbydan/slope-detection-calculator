@@ -73,9 +73,10 @@ export const FEMOptionsForOneEndFixed = {
 
 // SIMULTANEOUS EQN SOLVER
 export const solveSimultaneousEquations = (eq1, eq2) => {
+    
+  // Extract coefficients and constants
     const {totalFEM: c1, totalTheta1: a1, totalTheta2: b1, theta1, theta2} = eq1
     const {totalFEM: c2, totalTheta1: a2, totalTheta2: b2} = eq2
-  // Extract coefficients and constants
     
 
   // Calculate determinants
@@ -303,27 +304,46 @@ const getForce = (currentSpan, spansCount) => {
     const loadVal = parseFloat(currentSpan.load)
     const lengthVal = parseFloat(currentSpan.length) 
     const conditionIndex = loadingConditions.findIndex(condition => condition === currentSpan.condition)
-    
+    let force = {
+        value: 0,
+        totalValue: 0,
+        conditionType: ''
+    }
+
     if(conditionIndex === 1){
-        return (-1 * loadVal).toFixed(2)
+        force.value = loadVal
+        force.totalValue = (-1 * loadVal).toFixed(2)
+        force.condition = 'single'
     }
     else if(conditionIndex === 2){
-        return (-1 * loadVal).toFixed(2)
+        force.value = loadVal
+        force.totalValue = (-1 * loadVal).toFixed(2)
+        force.condition = 'single'
     }
     else if(conditionIndex === 3){
-        return (-1 * (2 * loadVal)).toFixed(2)
+        force.value = loadVal
+        force.totalValue = (-1 * (2 * loadVal)).toFixed(2)
+        force.condition = 'double'
     }
     else if(conditionIndex === 4){
-        return (-1 * (3 * loadVal)).toFixed(2)
+        force.value = loadVal
+        force.totalValue = (-1 * (3 * loadVal)).toFixed(2)
+        force.condition = 'triple'
     }
     else if(conditionIndex === 5){
-        return (-1 * (loadVal * lengthVal)).toFixed(2)
+        force.value = loadVal
+        force.totalValue = (-1 * (loadVal * lengthVal)).toFixed(2)
+        force.condition = 'uniform'
     }
     else if(conditionIndex === 6){
-        return (-1 * (loadVal * lengthVal / 2)).toFixed(2)
+        force.value = loadVal
+        force.totalValue = (-1 * (loadVal * lengthVal / 2)).toFixed(2)
+        force.condition = 'uniform'
     }
     else if(conditionIndex === 7){
-        return (-1 * (loadVal * lengthVal / 2)).toFixed(2)
+        force.value = loadVal
+        force.totalValue = (-1 * (loadVal * lengthVal / 2)).toFixed(2)
+        force.condition = 'uniform'
     }
     else if(conditionIndex === 8){}
     else if(conditionIndex === 9){}
@@ -331,57 +351,115 @@ const getForce = (currentSpan, spansCount) => {
     else{
 
     }
+    return force
+}
 
+const getForceBeforeNode = (calculatedForce, value, totalValue, condition, alphabet) => {
+    if(condition === "single"){
+        const forceAtLoad = {
+            node: `At ${value}`,
+            value: parseFloat(calculatedForce) + parseFloat(totalValue)
+        }
+        return [forceAtLoad]
+    }
+    else if(condition === "double"){
+        const forceAtFirstLoad = {
+            node: `At ${value}`,
+            value: parseFloat((parseFloat(calculatedForce) + (-1 * parseFloat(value))).toFixed(2))
+        }
+        const forceAtSecondLoad = {
+            node: `At ${value}`,
+            value: parseFloat((parseFloat(forceAtFirstLoad.value) + (-1 * parseFloat(value))).toFixed(2))
+        }
+        return[
+            forceAtFirstLoad,
+            forceAtSecondLoad
+        ]
+    }
+    else if(condition === "triple"){
+        const forceAtFirstLoad = {
+            node: `At ${value}`,
+            value: (parseFloat(calculatedForce) + (-1 * parseFloat(value))).toFixed(2)
+        }
+        const forceAtSecondLoad = {
+            node: `At ${value}`,
+            value: (parseFloat(forceAtFirstLoad.value) + (-1 * parseFloat(value))).toFixed(2) 
+        }
+        const forceAtThirdLoad = {
+            node: `At ${value}`,
+            value: (parseFloat(forceAtSecondLoad.value) + (-1 * parseFloat(value))).toFixed(2)
+        }
+        return[
+            forceAtFirstLoad,
+            forceAtSecondLoad,
+            forceAtThirdLoad
+        ]
+    }
+    else{
+        const forceBeforeNextNode = {
+            node: `Before-${alphabet}`,
+            value: parseFloat((parseFloat(calculatedForce) + parseFloat(totalValue)).toFixed(2))
+        }
+        return [forceBeforeNextNode]
+    }
 }
 
 export const obtainShearForces = (reactions, spansCount) => {
     const shearForces = []
     let calculatedForces = {}
-    let newForce;
+    let newForce
     let i = 0
 
     for(let reaction of reactions){
         const {spanNumber, currentSpanDetails, reactions} = reaction
         const r1Value = parseFloat(reactions.r1)
         const r2Value = parseFloat(reactions.r2)
+        const {value, totalValue, condition} = getForce(currentSpanDetails, spansCount)
 
         if(spanNumber === '1'){
-            const currentForce = parseFloat(getForce(currentSpanDetails, spansCount))
             calculatedForces[i] = r1Value
-            calculatedForces[i + 0.5] = parseFloat(calculatedForces[i]) + currentForce + r2Value
+            calculatedForces[i + 0.5] = parseFloat(calculatedForces[i]) + parseFloat(totalValue) + r2Value
             newForce = {
                 node: alphabets[i],
                 value: calculatedForces[i]
             }
+            
             shearForces.push(newForce)
+            const forces = getForceBeforeNode(calculatedForces[i], parseFloat(value), parseFloat(totalValue), condition, alphabets[i+1])
+            for (let force of forces){
+                shearForces.push(force)
+            }
         }
         else if(spanNumber === spansCount){
-            const currentForce = parseFloat(getForce(currentSpanDetails, spansCount))
-            console.log(currentForce, r2Value)
             calculatedForces[i] = parseFloat(calculatedForces[i - 0.5]) + r1Value
-            console.log(calculatedForces[i])
-            const lastNodeForce = parseFloat(calculatedForces[i]) + currentForce + r2Value
-            console.log(lastNodeForce)
+            const lastNodeForce = parseFloat(calculatedForces[i]) + parseFloat(totalValue) + r2Value
             const newForceNode1 = {
                 node: alphabets[i],
                 value: calculatedForces[i]
             }
             shearForces.push(newForceNode1)
+            const forces = getForceBeforeNode(calculatedForces[i], parseFloat(value), parseFloat(totalValue), condition, alphabets[i+1])
+            for (let force of forces){
+                shearForces.push(force)
+            }
             const newForceNode2 = {
                 node: alphabets[i + 1],
-                value: lastNodeForce.toFixed(2)
+                value: parseFloat(lastNodeForce.toFixed(2))
             }
             shearForces.push(newForceNode2)
         }
         else{
-            const currentForce = parseFloat(getForce(currentSpanDetails, spansCount))
             calculatedForces[i] = parseFloat(calculatedForces[i - 0.5]) + r1Value
-            calculatedForces[i + 0.5] = parseFloat(calculatedForces[i]) + currentForce + r2Value
+            calculatedForces[i + 0.5] = parseFloat(calculatedForces[i]) + parseFloat(totalValue) + r2Value
             newForce = {
                 node: alphabets[i],
                 value: calculatedForces[i]
             }
             shearForces.push(newForce)
+            const forces = getForceBeforeNode(calculatedForces[i], parseFloat(value), parseFloat(totalValue), condition, alphabets[i+1])
+            for (let force of forces){
+                shearForces.push(force)
+            }
         }
         
         i++
